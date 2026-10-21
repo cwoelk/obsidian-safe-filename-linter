@@ -74,7 +74,7 @@ export default class SafeFilenameLinter extends Plugin {
 
 		// Register the autolinting events, if enabled
 		if (this.settings.autoLint) {
-			// Registered inside onLayoutReady as best practice to avoid Obsidian startup issues
+			// As a part of Obsidian's vault initialization process, it will call `create` for every file. We don't want this, so we register the events in `onLayoutReady()`, as recommended by the official Obsidian documentation
 			// See https://docs.obsidian.md/plugins/guides/load-time#Listening+to+%60vault.on('create')%60
 			this.app.workspace.onLayoutReady(() => {
 				this.registerEvent(
