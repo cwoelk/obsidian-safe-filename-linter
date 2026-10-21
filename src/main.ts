@@ -124,14 +124,28 @@ export default class SafeFilenameLinter extends Plugin {
 		return replacement;
 	}
 
-	autoLintFilename(file: TAbstractFile) {
+	async autoLintFilename(file: TAbstractFile) {
 		if (!this.settings.autoLint || !(file instanceof TFile)) {
 			return;
 		}
 
-		// Wait until Obsidian has finished handling the create or rename event before renaming the file again.
-		// Renaming to a clean name triggers another rename event, which runs through this call again as a no-op.
-		window.setTimeout(() => this.lintFilename(file), 0);
+		// There are two specific considerations we are exercising caution on in this method.
+		// Race condition:
+		//   - Auto-renaming is only effective if it runs after the initial triggering event completes and lintFilename()
+		//     receives the new name. Although the official Obsidian documentation is unclear, we believe on('create') and
+		//     on('rename') execute after the respective events complete. However, if there is truly a race condition and the
+		//     auto-renaming loses the race (which has not proven to be the case in our testing), then the human operator can
+		//     correct by manually running the filename linting commands.
+		//   - See: https://docs.obsidian.md/Reference/TypeScript+API/Vault/on('create')
+		// Rename retrigger:
+		//   - lintFilename() inherently triggers a rename event. Theoretically, this could turn into an infinite loop.
+		//     However, in practice, this always resolves after two function calls. Either it makes no substitions and no
+		//     rename is triggered OR it makes all changes in the first function call and the second function call makes no
+		//     substitutions and does not trigger a third call.
+		//   - If we ever allow a wildcard substitution, this COULD trigger a true infinite loop (e.g. if a user attempts to
+		//     replace % with ^ and ^ with %).
+
+		await this.lintFilename(file);
 	}
 
 	async lintFilename(file: TFile) {
