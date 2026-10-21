@@ -21,11 +21,9 @@ These commands rename files by replacing invalid or troublesome characters with 
 
 ### Automatic invocation
 
-To have new files automatically linted, enable `Lint automatically` in the plugin settings. This handles files created in Obsidian and those created externally.
+To lint files automatically without needing to manually invoke the commands, enable `Lint automatically` in the plugin settings. This will automatically lint files created using Obsidian, as well as any files created in external systems that are synced into your Obsidian vault. Enabling the setting will not lint existing files. Run `Lint all filenames in the vault` once to clean them up.
 
-Existing files are not linted when the setting is enabled. Run `Lint all filenames in the vault` once to clean them up.
-
-To the best of the authors' understanding, this should also cover files added via Obsidian Sync. None of the existing authors use it. A contribution validating this would be very welcome.
+To the best of our understanding, `Lint automatically` should also handle files added using [Obsidian Sync](https://obsidian.md/sync), but since the authors of this plugin do not use Obsidian Sync, we cannot guarantee compatibility. A contribution validating compatibility would be very welcome.
 
 ### Credits
 
